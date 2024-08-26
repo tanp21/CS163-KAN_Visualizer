@@ -44,7 +44,7 @@ namespace KANN {
         return x;
     }
 
-    std::vector<float> KANLayer::backward(const std::vector<float> next_grad) {
+    std::vector<float> KANLayer::backward(const std::vector<float> &next_grad) {
         assert(next_grad.size() == bias_grad.size());
         for (int i = 0; i < bias_grad.size(); i++) {
             bias_grad[i] += next_grad[i];
