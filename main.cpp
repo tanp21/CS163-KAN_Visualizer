@@ -9,6 +9,7 @@ int main() {
     Texture2D background = LoadTexture("resources/StartPage/background.png");
 
     SetTargetFPS(60);
+    ToggleFullscreen();
 
     while(!WindowShouldClose()) {
         BeginDrawing();
