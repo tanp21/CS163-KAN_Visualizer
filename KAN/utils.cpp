@@ -1,4 +1,7 @@
-// #include "utils.h"
+#ifndef UTILS_CPP
+#define UTILS_CPP
+
+#include "utils.h"
 #include <bits/stdc++.h>
 
 namespace KANN {
@@ -41,3 +44,4 @@ namespace KANN {
         return sigmoid * (1 + x * (1 - sigmoid));
     }
 };
+#endif
