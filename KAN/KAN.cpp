@@ -1,7 +1,7 @@
 #ifndef KANNET_CPP
 #define KANNET_CPP
 
-#include "kannet.h"
+#include "KAN.h"
 
 namespace KANN {
     std::vector<float> KAN::forward(std::vector<float> x) {

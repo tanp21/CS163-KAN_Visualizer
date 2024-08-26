@@ -2,7 +2,7 @@
 #define KANLAYER_CPP
 
 #include "spline.h"
-#include "kanlayer.h"
+#include "KANLayer.h"
 
 namespace KANN {
     KANLayer::KANLayer(int num_in, int num_out, int spline_order) : 
