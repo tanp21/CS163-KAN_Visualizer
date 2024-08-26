@@ -2,8 +2,8 @@
 
 #include "utils.h"
 #include "spline.h"
-#include "kanlayer.h"
-#include "kannet.h"
+#include "KANLayer.h"
+#include "KAN.h"
 
 #ifdef LOCAL
 #include "debug.hpp"
