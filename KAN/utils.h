@@ -4,7 +4,7 @@
 #include <bits/stdc++.h>
 
 namespace KANN {
-    std::vector<float> grid;
+    extern std::vector<float> grid;
 
     void set_grid_range(float L, float R, int sz);
 
