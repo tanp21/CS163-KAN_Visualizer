@@ -55,8 +55,8 @@ namespace KANN {
         for (int i = 0; i < num_out; i++) {
             for (int j = 0; j < num_in; j++) {
                 spline[i][j].backward(scale_spline[i][j] * next_grad[i]);
-                scale_spline_grad[i][j] = spline[i][j].get_last() * next_grad[i];
-                scale_basis_grad[i][j] = last_silu[j] * next_grad[i];
+                scale_spline_grad[i][j] += spline[i][j].get_last() * next_grad[i];
+                scale_basis_grad[i][j] += last_silu[j] * next_grad[i];
             }
         }
 

@@ -28,6 +28,8 @@ namespace KANN {
 
     void KAN::train(const std::vector<std::pair<std::vector<float>, std::vector<float>>> &dataset, int epoch_size, \
     int num_epoch, float lr) {
+        float prev_loss = 1e6;
+        const float EPS = 1e-6;
         for (int i = 0; i < num_epoch; i++) {
             float loss = 0;
             for(auto &[x, y] : dataset) {
@@ -35,10 +37,16 @@ namespace KANN {
                 loss += layers.back().loss_func(y);
                 back_propagation(y);
             }
-            updateAll(lr, epoch_size);
             loss /= epoch_size;
+            if(loss > prev_loss || abs(loss - prev_loss) <= EPS) {
+                std::cerr << "DONE\n";
+                return;
+            }
+            prev_loss = loss;
+            updateAll(lr, epoch_size);
             std::cerr << "LOSS = " << loss << "\n";
         }
+        std::cerr << "DONE\n";
     }
 
     std::vector<float> KAN::predict(const std::vector<float> &x) {

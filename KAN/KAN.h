@@ -22,7 +22,7 @@ namespace KANN {
         KAN(const std::vector<int> &layer_in4, int spline_order = 3, int grid_size = grid.size());
 
         void train(const std::vector<std::pair<std::vector<float>, std::vector<float>>> &dataset, int epoch_size, \
-        int num_epoch = 10000, float lr = .1);
+        int num_epoch = 10000, float lr = .001);
 
         std::vector<float> predict(const std::vector<float> &x);
 
