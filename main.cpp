@@ -39,38 +39,12 @@ class StartPage {
     }
 };
 
-// struct StartPage {
-//     AutoTexture background(START_PAGE_PATH"background.png", 95, 7);
-//     AutoTexture title(START_PAGE_PATH"title.png", 171, 123);
-//     AutoTexture train_button(START_PAGE_PATH"training_button.png", 756, 581);
-//     AutoTexture infer_button(START_PAGE_PATH"inference_button.png", 756, 815);
-//     AutoTexture info_button(START_PAGE_PATH"info.png", 59, 932);
-//     AutoTexture man_button(START_PAGE_PATH"manual.png", 1760, 932);
-
-//     void show() {
-//         background.draw();
-//         title.draw();
-//         train_button.draw();
-//         infer_button.draw();
-//         info_button.draw();
-//         man_button.draw();
-//     }
-// };
-
 int main() {
     InitWindow(screenWidth, screenHeight, "KAN Visualization");
 
     SetTargetFPS(60);
     ToggleFullscreen();
 
-    // AutoTexture background(START_PAGE_PATH"background.png", 95, 7);
-    // AutoTexture title(START_PAGE_PATH"title.png", 171, 123);
-    // AutoTexture train_button(START_PAGE_PATH"training_button.png", 756, 581);
-    // AutoTexture infer_button(START_PAGE_PATH"inference_button.png", 756, 815);
-    // AutoTexture info_button(START_PAGE_PATH"info.png", 59, 932);
-    // AutoTexture man_button(START_PAGE_PATH"manual.png", 1760, 932);
-
-    // AutoTexture tex(START_PAGE_PATH"background.png", 95, 7);
     StartPage st;
 
     while(!WindowShouldClose()) {
@@ -79,12 +53,6 @@ int main() {
         ClearBackground(RAYWHITE);
 
         st.show();
-        // background.draw();
-        // title.draw();
-        // train_button.draw();
-        // infer_button.draw();
-        // info_button.draw();
-        // man_button.draw();
 
         EndDrawing();
     }
