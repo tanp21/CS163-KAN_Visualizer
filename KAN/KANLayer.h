@@ -32,7 +32,7 @@ namespace KANN {
         KANLayer(int num_in, int num_out, int spline_order);
 
         std::vector<float> forward_from(const std::vector<float> &prev_x);
-        std::vector<float> backward(const std::vector<float> next_grad);
+        std::vector<float> backward(const std::vector<float> &next_grad);
         std::vector<float> calc_base_grad(const std::vector<float> &y);
 
         void updateAll(float lr, int epoch_size);
