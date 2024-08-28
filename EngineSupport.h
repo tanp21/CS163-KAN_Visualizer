@@ -133,4 +133,41 @@ public:
     float getY() const { return bounds.y; }
 };
 
+class LineDrawer {
+private:
+    Vector2 start;
+    Vector2 end;
+    Color defaultColor;
+    Color currentColor;
+
+    Color calculateColor(float scaleFactor) {
+        float clampedScale = std::clamp(scaleFactor, 0.0f, 255.0f);
+
+        float scaleFactorAdjustment = std::min(clampedScale, 255.0f) / 255.0f;
+
+        int red = static_cast<int>(defaultColor.r * (1.0f - scaleFactorAdjustment));
+        int green = static_cast<int>(defaultColor.g * (1.0f - scaleFactorAdjustment));
+        int blue = static_cast<int>(defaultColor.b * (1.0f - scaleFactorAdjustment));
+
+        return { red, green, blue, defaultColor.a };
+    }
+
+public:
+    LineDrawer(float startX, float startY, float endX, float endY, Color color)
+        : start{startX, startY}, end{endX, endY}, defaultColor(color), currentColor(color) {}
+
+    void draw() const {
+        DrawLineV(start, end, currentColor);
+    }
+
+    void setScaleFactor(float scaleFactor) {
+        currentColor = calculateColor(scaleFactor);
+    }
+
+    void setPosition(float startX, float startY, float endX, float endY) {
+        start = { startX, startY };
+        end = { endX, endY };
+    }
+};
+
 #endif
