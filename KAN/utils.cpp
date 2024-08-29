@@ -43,5 +43,15 @@ namespace KANN {
 
         return sigmoid * (1 + x * (1 - sigmoid));
     }
+
+    std::vector<float> linspace(float L, float R, int steps) {
+        std::vector<float> res(steps); 
+        res[0] = L;
+        float step_size = (R-L)/(steps - 1);
+        for (int i = 0; i < steps-1; i++) {
+            res[i+1] = res[i] + steps;
+        }
+        return res;
+    }
 };
 #endif

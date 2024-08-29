@@ -13,5 +13,7 @@ namespace KANN {
     float silu(float x);
 
     float silu_derivative(float x);
+
+    std::vector<float> linspace(float L, float R, int steps);
 };
 #endif
