@@ -28,6 +28,8 @@ namespace KANN {
         float derivative();
 
         float eval(float x);
+        float eval_tmp(float x);
+        std::vector<float> eval_tmp(const std::vector<float> &x);
 
         float get_last() const;
 

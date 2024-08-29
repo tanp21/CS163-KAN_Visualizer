@@ -59,6 +59,41 @@ namespace KANN {
         return last = res;
     }
 
+    float B_Spline::eval_tmp(float x) {
+        std::vector<float> pre, bases_tmp((int)grid.size() - 1);
+        // bases.resize((int)grid.size() - 1);
+        for (int i = 0; i + 1 < grid.size(); i++) {
+            bases_tmp[i] = (grid[i] <= x && x < grid[i+1]);
+        }
+
+        pre = bases;
+
+        for (int k = 1; k <= spline_order; k++) {
+            bases_tmp.resize((int)grid.size() - k - 1);
+            for (int i = 0; i + k + 1 < grid.size(); i++) {
+                bases_tmp[i] = (x - grid[i])/(grid[i + k] - grid[i])*pre[i] + \
+                    (grid[i+k+1] - x)/(grid[i+k+1] - grid[i+1])*pre[i+1];
+            }
+
+            pre = bases;
+        }
+
+        float res = 0.;
+        for (int i = 0; i < bases_tmp.size(); i++) {
+            res += bases_tmp[i];
+        }
+
+        return res;
+    }
+
+    std::vector<float> B_Spline::eval_tmp(const std::vector<float> &x) {
+        std::vector<float> y(x.size());
+        for (int i = 0; i < y.size(); i++) {
+            y[i] = B_Spline::eval_tmp(x[i]);
+        }
+        return y;
+    }
+
     float B_Spline::get_last() const {
         return last;
     }
