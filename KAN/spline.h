@@ -3,6 +3,7 @@
 
 #include <bits/stdc++.h>
 #include "utils.h"
+#include "visualizer.h"
 
 namespace KANN {
     class B_Spline {
@@ -20,6 +21,21 @@ namespace KANN {
         int num_bases;
 
         public:
+
+        const std::vector<float>& getBases() const;
+        const std::vector<float>& getCoef() const;
+        const std::vector<float>& getCoefGrad() const;
+        float getDbDx() const;
+        float getLast() const;
+        int getSplineOrder() const;
+        int getNumPoints() const;
+        int getNumBases() const;
+
+        void setBases(const std::vector<float>& bases);
+        void setCoef(const std::vector<float>& coef);
+        void setCoefGrad(const std::vector<float>& coefGrad);
+        void setDbDx(float dbDx);
+        void setLast(float last);
 
         B_Spline(int spline_order = 3, int num_points = grid.size());
 

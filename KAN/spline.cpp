@@ -3,8 +3,24 @@
 
 #include "utils.h"
 #include "spline.h"
+#include "visualizer.h"
 
 namespace KANN {
+    const std::vector<float>& B_Spline::getBases() const { return bases; }
+    const std::vector<float>& B_Spline::getCoef() const { return coef; }
+    const std::vector<float>& B_Spline::getCoefGrad() const { return coef_grad; }
+    float B_Spline::getDbDx() const { return db_dx; }
+    float B_Spline::getLast() const { return last; }
+    int B_Spline::getSplineOrder() const { return spline_order; }
+    int B_Spline::getNumPoints() const { return num_points; }
+    int B_Spline::getNumBases() const { return num_bases; }
+
+    void B_Spline::setBases(const std::vector<float>& bases) { this->bases = bases; }
+    void B_Spline::setCoef(const std::vector<float>& coef) { this->coef = coef; }
+    void B_Spline::setCoefGrad(const std::vector<float>& coefGrad) { this->coef_grad = coefGrad; }
+    void B_Spline::setDbDx(float dbDx) { this->db_dx = dbDx; }
+    void B_Spline::setLast(float last) { this->last = last; }
+
     B_Spline::B_Spline(int spline_order, int num_points) : 
     spline_order(spline_order),
     num_points(num_points),
@@ -66,7 +82,7 @@ namespace KANN {
             bases_tmp[i] = (grid[i] <= x && x < grid[i+1]);
         }
 
-        pre = bases;
+        pre = bases_tmp;
 
         for (int k = 1; k <= spline_order; k++) {
             bases_tmp.resize((int)grid.size() - k - 1);
@@ -75,12 +91,12 @@ namespace KANN {
                     (grid[i+k+1] - x)/(grid[i+k+1] - grid[i+1])*pre[i+1];
             }
 
-            pre = bases;
+            pre = bases_tmp;
         }
 
         float res = 0.;
         for (int i = 0; i < bases_tmp.size(); i++) {
-            res += bases_tmp[i];
+            res += bases_tmp[i]*coef[i];
         }
 
         return res;

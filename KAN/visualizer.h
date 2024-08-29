@@ -16,27 +16,37 @@ private:
     ButtonTexture box;
     const int BOX_SIZE = 65;
     float x_pos, y_pos;
+    std::vector<float> x, y;
+    const float min_x = -1, max_x = 1;
+    float min_y, max_y;
 
 public:
     SplineBoxVisualizer(const std::string&file_path, float x_pos, float y_pos)
         : box(file_path, x_pos, y_pos), x_pos(x_pos), y_pos(y_pos) {};
 
-    void show(const std::vector<float> &x, const std::vector<float> &y) {
-        assert(x.size() == y.size());
-        assert((int)x.size() == 65);
+    void setGraph(const std::vector<float>& _x, const std::vector<float>& _y) {
+        assert(_x.size() == _y.size());
 
-        float min_x = -1, max_x = 1;
-        float min_y = *std::min_element(y.begin(), y.end());
-        float max_y = *std::max_element(y.begin(), y.end());
+        x = _x, y = _y;
 
+        min_y = *std::min_element(y.begin(), y.end());
+        max_y = *std::max_element(y.begin(), y.end());
+    }
+
+    void show() {
         box.draw();
 
-        for (int i = 0; i < x.size(); i++) {
-            Vector2 screen_pos = {
-                x_pos + i,
-                y_pos + (y[i] - min_y)/(max_y - min_y)*BOX_SIZE
+        for (int i = 0; i+1 < x.size(); i++) {
+            Vector2 pos1 = {
+                x_pos + (x[i] - min_x)/(max_x - min_x)*BOX_SIZE,
+                y_pos + BOX_SIZE - (y[i] - min_y)/(max_y - min_y)*BOX_SIZE
             };
-            DrawCircleV(screen_pos, 2, BLACK);
+            Vector2 pos2 = {
+                x_pos + (x[i+1] - min_x)/(max_x - min_x)*BOX_SIZE,
+                y_pos + BOX_SIZE - (y[i+1] - min_y)/(max_y - min_y)*BOX_SIZE
+            };
+            DrawLineEx(pos1, pos2, 2, BLACK);
+            // DrawCircleV(screen_pos, 2, BLACK);
         }
     }
 
@@ -86,22 +96,27 @@ public:
         DrawLine(POS_LEFT, 973.0/2, POS_RIGHT, 973.0/2, DARKGRAY);
         DrawLine(960, 973.0/2 - 744/2, 960, 973.0/2 + 744/2, DARKGRAY);
 
-        for (float x = X_MIN; x <= X_MAX; x += 0.01f) {
-            float y = KANN::silu(x);
+        // for (float x = X_MIN; x <= X_MAX; x += 0.01f) {
+        //     float y = KANN::silu(x);
 
-            Vector2 screen_pos = {
-                ORIGIN.x + x*x_scale,
-                ORIGIN.y - y*y_scale
-            };
+        //     Vector2 screen_pos = {
+        //         ORIGIN.x + x*x_scale,
+        //         ORIGIN.y - y*y_scale
+        //     };
 
-            DrawCircleV(screen_pos, 2, RED);
-        }
+        //     DrawCircleV(screen_pos, 2, RED);
+        // }
     }
 };
 
 class DataVisualizer {
 private:
+    enum State {
+        VIS_NETWORK,
+        VIS_SPLINE
+    };
 
+    State state;
 
     const int SPLINE_BOX_W = 65;
     const int NEURON_W = 26;
@@ -111,32 +126,29 @@ private:
 
     std::vector<std::vector<ButtonTexture>> neuron;
     std::vector<std::vector<std::vector<std::vector<LineDrawer>>>> edges;
-    std::vector<std::vector<std::vector<ButtonTexture>>> splines;
+    std::vector<std::vector<std::vector<SplineBoxVisualizer>>> splines;
 
     SplineVisualizer spline_vis;
 
 public:
+    DataVisualizer() {}
 
-    DataVisualizer(const std::vector<int> &layer_in4) {
+    void init(const std::vector<int> &layer_in4) {
         assert((int)layer_in4.size() >= 1);
+        state = VIS_NETWORK;
+
         int gapH = ((1920 - 200) - NEURON_W*(int)layer_in4.size())/((int)layer_in4.size()-1);
+
         neuron.resize(layer_in4.size());
         edges.resize((int)layer_in4.size() - 1);
+
         for (int l = 0, curX = 100; l < (int)layer_in4.size(); l++, curX += gapH + NEURON_W) {
             assert(layer_in4[l] >= 0);
             int gapV = (973 - NEURON_W*layer_in4[l])/(layer_in4[l] + 1);
+
             for (int j = 0, curY = gapV; j < layer_in4[l]; j++, curY += gapV + NEURON_W) {
                 neuron[l].emplace_back(DATA_VIS_PATH"neuron.png", curX, curY);
-                // neuron[i][j].setPosition(curX, curY);
             }
-            // if(l > 0) {
-            //     edges[l-1].resize(layer_in4[l]);
-            //     for (int j = 0; j < layer_in4[l]; j++) {
-            //         for (int i = 0; i < layer_in4[l-1]; i++) {
-            //             edges[l-1][j].emplace_back()
-            //         }
-            //     }
-            // }
         }
 
         splines.resize((int)layer_in4.size() - 1);
@@ -171,6 +183,10 @@ public:
     }
 
     void show() {
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
         for (int i = 0; i < neuron.size(); i++) {
             for (int j = 0; j < neuron[i].size(); j++) {
                 neuron[i][j].draw();
@@ -181,7 +197,7 @@ public:
             for (int i = 0; i < neuron[l].size(); i++) {
                 for (int j = 0; j < neuron[l+1].size(); j++) {
                     splines[l][i][j].action();
-                    splines[l][i][j].draw();
+                    splines[l][i][j].show();
                     assert(edges[l][i][j].size() == 2);
                     for (int k = 0; k < 2; k++) {
                         edges[l][i][j][k].draw();
@@ -190,8 +206,14 @@ public:
             }
         }
 
-        spline_vis.action();
-        spline_vis.show();
+        EndDrawing();
+
+        // spline_vis.action();
+        // spline_vis.show();
+    }
+
+    void setSpline(int lvl, int src, int snk, const std::vector<float> &x, const std::vector<float> &y) {
+        splines[lvl][src][snk].setGraph(x, y);
     }
 };
 

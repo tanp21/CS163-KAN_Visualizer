@@ -3,13 +3,36 @@
 
 #include "spline.h"
 #include "KANLayer.h"
+#include "visualizer.h"
 
 namespace KANN {
-    KANLayer::KANLayer(int num_in, int num_out, int spline_order) : 
+    const std::vector<std::vector<float>>& KANLayer::getScaleSpline() const { return scale_spline; }
+    const std::vector<std::vector<float>>& KANLayer::getScaleSplineGrad() const { return scale_spline_grad; }
+    const std::vector<std::vector<float>>& KANLayer::getScaleBasis() const { return scale_basis; }
+    const std::vector<std::vector<float>>& KANLayer::getScaleBasisGrad() const { return scale_basis_grad; }
+    const std::vector<float>& KANLayer::getBias() const { return bias; }
+    const std::vector<float>& KANLayer::getBiasGrad() const { return bias_grad; }
+    const std::vector<std::vector<B_Spline>>& KANLayer::getSpline() const { return spline; }
+    int KANLayer::getNumFeatures() const { return num_features; }
+    int KANLayer::getNumIn() const { return num_in; }
+    int KANLayer::getNumOut() const { return num_out; }
+    int KANLayer::getSplineOrder() const { return spline_order; }
+    int KANLayer::getLevel() const { return lvl; }
+
+    void KANLayer::setBias(const std::vector<float>& bias) { this->bias = bias; }
+    void KANLayer::setBiasGrad(const std::vector<float>& biasGrad) { this->bias_grad = biasGrad; }
+    void KANLayer::setScaleSpline(const std::vector<std::vector<float>>& scaleSpline) { this->scale_spline = scaleSpline; }
+    void KANLayer::setScaleSplineGrad(const std::vector<std::vector<float>>& scaleSplineGrad) { this->scale_spline_grad = scaleSplineGrad; }
+    void KANLayer::setScaleBasis(const std::vector<std::vector<float>>& scaleBasis) { this->scale_basis = scaleBasis; }
+    void KANLayer::setScaleBasisGrad(const std::vector<std::vector<float>>& scaleBasisGrad) { this->scale_basis_grad = scaleBasisGrad; }
+    void KANLayer::setSplines(const std::vector<std::vector<B_Spline>>& splines) { this->spline = splines; }
+
+    KANLayer::KANLayer(int num_in, int num_out, int spline_order, int lvl) : 
         num_features(num_in),
         num_in(num_in),
         num_out(num_out),
-        spline_order(spline_order)
+        spline_order(spline_order),
+        lvl(lvl)
     {
         spline = std::vector<std::vector<B_Spline>>(num_out, std::vector<B_Spline>(num_in));
 
@@ -33,6 +56,11 @@ namespace KANN {
             silu_d[j] = silu_derivative(_x);
             for(int i = 0; i < num_out; i++) {
                 spline[i][j].cox_de_boor(_x);
+
+                std::vector<float> tmp_x = linspace(-1.0, 1.0, 20);
+                // std::vector<float> tmp_y = silu(tmp_x);
+                std::vector<float> tmp_y = spline[i][j].eval_tmp(tmp_x);
+                // visualizer->setSpline(lvl, j, i, tmp_x, tmp_y);
                 x[i] += scale_spline[i][j]*spline[i][j].eval(_x) + scale_basis[i][j]*last_silu[j];
             }
         }
@@ -40,6 +68,10 @@ namespace KANN {
         for (int i = 0; i < x.size(); i++) {
             x[i] += bias[i];
         }
+
+        // visualizer->show();
+
+        // animations.emplace_back(*visualizer);
 
         return x;
     }
@@ -82,8 +114,18 @@ namespace KANN {
 
                 scale_spline_grad[i][j] = 0;
                 scale_basis_grad[i][j] = 0;
+
+                std::vector<float> tmp_x = linspace(-1.0, 1.0, 20);
+                // std::vector<float> tmp_y = silu(tmp_x);
+                std::vector<float> tmp_y = spline[i][j].eval_tmp(tmp_x);
+                for (auto &val : tmp_y) {
+                    val = val*scale_spline[i][j] + last_silu[j]*scale_basis[i][j];
+                }
+                visualizer->setSpline(lvl, j, i, tmp_x, tmp_y);
             }
         }
+        visualizer->show();
+        // animations.emplace_back(*visualizer);
     }
 
     std::vector<float> KANLayer::calc_base_grad(const std::vector<float> &y) {
