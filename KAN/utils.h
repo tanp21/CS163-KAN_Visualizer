@@ -7,7 +7,10 @@
 namespace KANN {
     extern std::vector<float> grid;
     extern std::unique_ptr<DataVisualizer> visualizer;
+    extern std::unique_ptr<DataVisualizer> visualizer_sbs;
     extern std::vector<DataVisualizer> animations;
+    extern std::vector<int> prev_in4;
+    extern std::vector<std::vector<float>> val_node;
     extern int cnt;
     // extern std::vector<DataVisualizer> animations;
 

@@ -8,8 +8,12 @@
 namespace KANN {
     std::vector<float> grid;  // Define the global variable here
     std::unique_ptr<DataVisualizer> visualizer;
+    std::unique_ptr<DataVisualizer> visualizer_sbs;
     std::vector<DataVisualizer> animations;
+    std::vector<int> prev_in4;
     int cnt = 0;
+
+    // std::vector<std::vector<float>> val_node;
     // std::vector<DataVisualizer> animations;
 
     // Define the functions here

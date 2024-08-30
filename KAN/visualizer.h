@@ -109,11 +109,13 @@ public:
     }
 };
 
+
 class DataVisualizer {
 private:
     enum State {
         VIS_NETWORK,
-        VIS_SPLINE
+        VIS_SPLINE,
+        VIS_NODE
     };
 
     State state;
@@ -124,17 +126,32 @@ private:
     const int RIGHT_NEURON = 1794;
     const int BOX_DIS = 21;
 
+    ButtonTexture node_box;
     std::vector<std::vector<ButtonTexture>> neuron;
     std::vector<std::vector<std::vector<std::vector<LineDrawer>>>> edges;
     std::vector<std::vector<std::vector<SplineBoxVisualizer>>> splines;
 
     SplineVisualizer spline_vis;
+    // void DrawFloatInCenter(float number, int screenWidth, int screenHeight, int fontSize, Color textColor) {
+    //     char numberText[20]; // Buffer to hold the number as text
+    //     sprintf(numberText, "%.3f", number); // Convert float to string with 2 decimal places
+    
+    //     // Measure the width of the text to center it
+    //     int textWidth = MeasureText(numberText, fontSize);
+    
+    //     // Draw the number centered on the screen
+    //     DrawText(numberText, (screenWidth - textWidth) / 2, screenHeight / 2, fontSize, textColor);
+    // }
 
 public:
-    DataVisualizer() {}
+    DataVisualizer() :
+        node_box(DATA_VIS_PATH"node_box.png", 723, 303) {}
 
     void init(const std::vector<int> &layer_in4) {
         assert((int)layer_in4.size() >= 1);
+        neuron.clear();
+        edges.clear();
+        splines.clear();
         state = VIS_NETWORK;
 
         int gapH = ((1920 - 200) - NEURON_W*(int)layer_in4.size())/((int)layer_in4.size()-1);
@@ -182,13 +199,22 @@ public:
         }
     }
 
-    void show() {
-        BeginDrawing();
+    void show(bool re_draw = true) {
+        if(re_draw) {
+            BeginDrawing();
 
-        ClearBackground(RAYWHITE);
+            ClearBackground(RAYWHITE);
+        }
+
+        bool to_vis_node = false;
+
 
         for (int i = 0; i < neuron.size(); i++) {
             for (int j = 0; j < neuron[i].size(); j++) {
+                if(neuron[i][j].action() && state == VIS_NETWORK) {
+                    to_vis_node = true;
+                }
+
                 neuron[i][j].draw();
             }
         }
@@ -206,7 +232,27 @@ public:
             }
         }
 
-        EndDrawing();
+        if (state == VIS_NODE) {
+            if(node_box.action()) {
+                state = VIS_NETWORK;
+            }
+            node_box.draw();
+            float number = rand()%10 -5.0;
+            char numberText[20]; // Buffer to hold the number as text
+            sprintf(numberText, "%.3f", number); // Convert float to string with 2 decimal places
+    
+            // Measure the width of the text to center it
+            int textWidth = MeasureText(numberText, 20);
+            int screenWidth = 1920, screenHeight = 1080;
+    
+            // Draw the number centered on the screen
+            DrawText(numberText, (screenWidth - textWidth) / 2, screenHeight / 2, 20, BLACK);
+        }
+
+        if(to_vis_node) state = VIS_NODE;
+
+        if(re_draw)
+            EndDrawing();
 
         // spline_vis.action();
         // spline_vis.show();

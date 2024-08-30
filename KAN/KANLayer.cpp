@@ -25,7 +25,17 @@ namespace KANN {
     void KANLayer::setScaleSplineGrad(const std::vector<std::vector<float>>& scaleSplineGrad) { this->scale_spline_grad = scaleSplineGrad; }
     void KANLayer::setScaleBasis(const std::vector<std::vector<float>>& scaleBasis) { this->scale_basis = scaleBasis; }
     void KANLayer::setScaleBasisGrad(const std::vector<std::vector<float>>& scaleBasisGrad) { this->scale_basis_grad = scaleBasisGrad; }
-    void KANLayer::setSplines(const std::vector<std::vector<B_Spline>>& splines) { this->spline = splines; }
+    void KANLayer::setSplines(const std::vector<std::vector<B_Spline>>& splines) { this->spline = splines; 
+        for (int i = 0; i < num_out; i++) {
+            for (int j = 0; j < num_in; j++) {
+                std::vector<float> tmp_x = linspace(-1.0, 1.0, 20);
+                std::vector<float> tmp_y = this->spline[i][j].eval_tmp(tmp_x);
+                visualizer_sbs->setSpline(this->lvl, j, i, tmp_x, tmp_y);
+            }
+        }
+
+        // visualizer_sbs->show();
+    }
 
     KANLayer::KANLayer(int num_in, int num_out, int spline_order, int lvl) : 
         num_features(num_in),

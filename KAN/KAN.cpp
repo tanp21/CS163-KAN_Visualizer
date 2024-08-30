@@ -171,6 +171,8 @@ namespace KANN {
         // layers.resize(numLayers);
         layers.clear();
 
+        visualizer_sbs = std::make_unique<DataVisualizer>();
+        visualizer_sbs->init(prev_in4);
 
         for (int i = 0; i < numLayers; i++) {
             // Read layer parameters
@@ -182,6 +184,7 @@ namespace KANN {
             inFile.read(reinterpret_cast<char*>(&level), sizeof(level));
 
             KANLayer layer(numIn, numOut, splineOrder, level);
+
 
             // Read bias and bias_grad
             std::vector<float> bias(numOut), biasGrad(numOut);
@@ -227,7 +230,7 @@ namespace KANN {
                     spline = B_Spline(splineOrder, numPoints);
 
                     // Read vectors: bases, coef, coef_grad
-                    std::vector<float> bases(numPoints - 1);
+                    std::vector<float> bases(numBases);
                     std::vector<float> coef(numBases);
                     std::vector<float> coefGrad(numBases);
                     inFile.read(reinterpret_cast<char*>(bases.data()), bases.size() * sizeof(float));
@@ -255,6 +258,8 @@ namespace KANN {
         } else {
             std::cerr << "Error occurred while loading parameters from " << filename << std::endl;
         }
+
+        visualizer_sbs->show(false);
     }
 };
 
