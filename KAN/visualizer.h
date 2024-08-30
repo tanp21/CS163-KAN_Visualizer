@@ -199,6 +199,7 @@ public:
         }
     }
 
+
     void show(bool re_draw = true) {
         if(re_draw) {
             BeginDrawing();
@@ -237,16 +238,19 @@ public:
                 state = VIS_NETWORK;
             }
             node_box.draw();
-            float number = rand()%10 -5.0;
+
+            float number = -5.0 + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (10.0)));
+
+            // float number = rand()/10.0 - 5.0;
             char numberText[20]; // Buffer to hold the number as text
             sprintf(numberText, "%.3f", number); // Convert float to string with 2 decimal places
     
             // Measure the width of the text to center it
-            int textWidth = MeasureText(numberText, 20);
+            int textWidth = MeasureText(numberText, 42);
             int screenWidth = 1920, screenHeight = 1080;
     
             // Draw the number centered on the screen
-            DrawText(numberText, (screenWidth - textWidth) / 2, screenHeight / 2, 20, BLACK);
+            DrawText(numberText, (screenWidth - textWidth) / 2, screenHeight / 2, 42, BLACK);
         }
 
         if(to_vis_node) state = VIS_NODE;
