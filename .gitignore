@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+history/*
+history/
+KAN/main.cpp
