@@ -180,8 +180,8 @@ private:
 
     // play bar
     AutoTexture play_bar;
-    AutoTexture progress_bar;
-    AutoTexture loss_text;
+    // AutoTexture progress_bar;
+    // AutoTexture loss_text;
 
     // buttons
     ButtonTexture play_button;
@@ -193,8 +193,6 @@ private:
 public:
     VisualizePage()
         :   play_bar(VISUAL_PAGE_PATH"play_bar.png", 0, 973),
-            progress_bar(VISUAL_PAGE_PATH"progress_bar.png", 348, 1005),
-            loss_text(VISUAL_PAGE_PATH"loss_text.png", 1274, 992),
             play_button(VISUAL_PAGE_PATH"play_button.png", 136, 996),
             pause_button(VISUAL_PAGE_PATH"pause_button.png", 141, 1000),
             prev_button(VISUAL_PAGE_PATH"prev_button.png", 59, 1007),
@@ -202,21 +200,21 @@ public:
             home_button(VISUAL_PAGE_PATH"home_button.png", 1789, 992),
             state(PAUSED) {}
 
-    void play_or_pause() {
-        if(state == PAUSED) {
-            if(play_button.action()) {
-                state = PLAYING;
-            }
-            play_button.draw();
-        }
-        else {
-            if(pause_button.action()) {
-                state = PAUSED;
-            }
-            pause_button.action();
-            pause_button.draw();
-        }
-    }
+    // void play_or_pause() {
+    //     if(state == PAUSED) {
+    //         if(play_button.action()) {
+    //             state = PLAYING;
+    //         }
+    //         play_button.draw();
+    //     }
+    //     else {
+    //         if(pause_button.action()) {
+    //             state = PAUSED;
+    //         }
+    //         pause_button.action();
+    //         pause_button.draw();
+    //     }
+    // }
 
     void show() {
         int cur = KANN::cnt-1;
@@ -227,8 +225,8 @@ public:
             ClearBackground(RAYWHITE);
 
             play_bar.draw();
-            progress_bar.draw();
-            loss_text.draw();
+            // progress_bar.draw();
+            // loss_text.draw();
 
             // play_or_pause();
 
